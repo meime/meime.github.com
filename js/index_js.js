@@ -83,6 +83,7 @@ window.onload= function(){
 		clearInterval(time);
 	};
 	oBanner.onmouseout = function(){
+		clearInterval(time);
 		time = setInterval(function(){
 			num++;	
 			for(var j=0;j<aBtn_list.length;j++){
