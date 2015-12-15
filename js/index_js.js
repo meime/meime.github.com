@@ -84,10 +84,16 @@ window.onload= function(){
 	};
 	oBanner.onmouseout = function(){
 		time = setInterval(function(){
-			num++;
-			oBanner.style.background= 'url(img/banner'+(num%9+1)+'.jpg)' + 'no-repeat center 0';
+			num++;	
+			for(var j=0;j<aBtn_list.length;j++){
+				aBtn_list[j].className='';	
+			}
+			for(var j=0;j<banConlist.length;j++){
+				 banConlist[j].className='';
+			}
+			oBanner.style.background= 'url(img/banner'+(num%9+1)+'.jpg)' + 'no-repeat center 0';	
 			banConlist[num%9].className ='show_banner_con';
-			aBtn_list[num%9].className='show';
+			aBtn_list[num%9].className='show';	
 		},2000);
 	};
 	/**今日热门jshover**/	
