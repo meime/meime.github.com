@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+<style>
+*{margin:0;padding:0;list-style:none;}
+body{background:#69aa70;}
+.box{width:1000px;height:700px;position:relative;text-align:center;padding-top:100px;margin:0 auto;position:relative;}
+.box ul{ width:480px; height:260px; position:absolute; left:50%; margin-left:-240px; margin-top:50px;}
+.box ul li{ width:100%; height:100%; position:absolute; left:0; top:0; color:#fff; font-size:30px; text-align:center; line-height:300px; font-weight:bold;border:1px solid #ccc; opacity:0; -webkit-box-reflect:below 10px -webkit-linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.5)); transition:.5s all cubic-bezier(0.79, 2.59, 0.74, 0.25);  transform:perspective(800px) translateX(0px) rotateY(0deg);}
+.box ul li img{width:100%;}
+.box ul li.l2{ opacity:0; transform:perspective(800px) translateX(-280px) rotateY(60deg); z-index:1;}
+.box ul li.l1{ opacity:0.8; transform:perspective(800px) translateX(-220px) rotateY(60deg); z-index:2;}
+.box  ul li.cur{ opacity:1; z-index:5;}
+.box  ul li.r1{ opacity:0.8;transform:perspective(800px) translateX(220px) rotateY(-60deg); z-index:2;}
+.box  ul li.r2{ opacity:0;transform:perspective(800px) translateX(280px) rotateY(-60deg); z-index:1;}
+.left,.right{width:100px;height:40px;background:#316439;text-align:center;color:#fff;line-height:40px;cursor:pointer;position:absolute;}
+.left:hover{box-shadow:0px 0px 15px #fff;}
+.left{left:390px;top:30px;}
+.right{left:510px;top:30px;}
+</style>
+<script>
+window.onload=function(){
+	var oLeft=document.querySelector('.left');	
+	var oRight=document.querySelector('.right');
+	var aLi=document.querySelectorAll('#ul1 li');
+	//存class
+	var aClass=[];
+	for(var i=0; i<aLi.length; i++){
+		aClass[i]=aLi[i].className;
+	}
+	function tab(){
+		for(var i=0; i<aLi.length; i++){
+			aLi[i].className=aClass[i];
+		}	
+	}	
+	//右边
+	oRight.onclick=function(){
+		aClass.unshift(aClass.pop());	
+		tab();
+	}	
+	//左边面
+	oLeft.onclick=function(){
+		aClass.push(aClass.shift());		
+		tab();
+	};
+};
+
+</script>
+</head>
+
+<body>
+<div class="box">
+	<div class="left">上一个</div>
+    <div class="right">下一个</div>
+    <ul id="ul1">
+        <li class="l2"><img src="img/3dpic1.jpg"/></li>
+        <li class="l1"><img src="img/3dpic2.jpg"/></li>
+        <li class="cur"><img src="img/3dpic3.jpg"/></li>
+        <li class="r1"><img src="img/3dpic4.jpg"/></li>
+        <li class="r2"><img src="img/3dpic5.jpg"/></li>
+        <li><img src="img/3dpic6.jpg"/></li>
+        <li><img src="img/3dpic7.jpg"/></li>
+        <li><img src="img/3dpic8.jpg"/></li>
+        <li><img src="img/3dpic9.jpg"/></li>
+        <li><img src="img/3dpic10.jpg"/></li>
+        <li><img src="img/3dpic11.jpg"/></li>
+        <li><img src="img/3dpic12.jpg"/></li>
+    </ul>
+</div>
+</body>
+</html>

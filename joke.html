@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+<style>
+*{margin:0;padding:0;}
+body{background:#69aa70;}
+span{float:left; font-size:50px; font-weight:bold; color:#fff; opacity:0;}
+div{width:1000px;margin:0 auto;}
+</style>
+<script src="js/move.js"></script>
+<script>
+window.onload = function(){
+	var str = '某县一农民，天天喂猪吃泔水，结果被“动物保护协会罚了一万元”---因为虐待动物，后来，农夫改喂猪吃天山雪莲，结果又被“环境保护协会”罚了---因为浪费粮食。有一天，领导来视察，为农民给猪吃什么，农民说：“我也不知道给他吃什么好了，现在我每天给他100块钱，让它自己出去吃”';
+	for(var i=0;i<str.length;i++){
+		var oS = document.createElement('span');
+		oS.innerHTML = str.charAt(i);
+		document.body.children[0].appendChild(oS);
+	}
+	var aS = document.body.children[0].children;
+	var i=0;
+	var timer= null;
+	timer = setInterval(function(){
+		//aS[i].style.opacity=1;
+		startMove(aS[i],{opacity:1});
+		i++;
+		if(i==str.length){
+			clearInterval(timer);
+		}
+	},100);
+};
+</script>
+</head>
+
+<body>
+<div></div>
+</body>
+</html>

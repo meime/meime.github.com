@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+<style>
+.box{width:300px;height:300px;margin:100px auto;position:relative;left:0;top:0;-webkit-transform-style:preserve-3d;-webkit-transform:perspective(800px) rotateX(0deg) rotateY(0deg);}
+.box div{width:100%;height:100%;position:absolute;left:0;top:0;text-align:center;line-height:300px;}
+.front{background:#0F3;-webkit-transform:translateZ(150px);}
+.back{background:#0F9;-webkit-transform:translateZ(-150px);}
+.left{background:#C33;-webkit-transform:translateX(-150px) rotateY(-90deg);}
+.right{background:pink;-webkit-transform:translateX(150px) rotateY(90deg);}
+.top{background:#FF0;-webkit-transform:translateY(-150px) rotateX(-90deg);}
+.bottom{background:#36F;-webkit-transform:translateY(150px) rotateX(90deg);}
+</style>
+<script>
+window.onload = function(){
+	var oBox = document.querySelector('.box');
+	var x =0;
+	var y = 0;
+	var left = false;
+	var right = false;
+	var top = false;
+	var bottom = false;
+	oBox.onmousedown = function(ev){
+		var disX = ev.clientX - y;
+		var disY = ev.clientY - x;
+		document.onmousemove = function(ev){
+			y = ev.clientX - disX;
+			x = ev.clientY - disY;
+			oBox.style.WebkitTransform = 'perspective(800px) rotateX('+-x/5+'deg) rotateY('+y/5+'deg)';
+		};
+		document.onmouseup = function(){
+			document.onmousemove = null;
+			document.onmouseup = null;
+		};
+		return false;
+	};
+	setInterval(function(){
+		if(right){
+			y+=3;
+			oBox.style.WebkitTransform = 'perspective(800px)   rotateX('+-x/5+'deg) rotateY('+y/5+'deg)';
+		}
+		if(left){
+			y-=3;
+			oBox.style.WebkitTransform = 'perspective(800px)   rotateX('+-x/5+'deg) rotateY('+y/5+'deg)';
+		}
+		if(top){
+			x-=3;
+			oBox.style.WebkitTransform = 'perspective(800px) rotateX('+-x/5+'deg) rotateY('+y/5+'deg)';
+		}
+		if(bottom){
+			x+=3;
+			oBox.style.WebkitTransform = 'perspective(800px) rotateX('+-x/5+'deg) rotateY('+y/5+'deg)';
+		}
+	},30);
+	document.onkeydown = function(ev){
+		if(ev.keyCode==39){
+			right = true;
+		}else if(ev.keyCode==37){
+			left = true;
+		}
+		if(ev.keyCode==38){
+			top = true;
+		}else if(ev.keyCode==40){
+			bottom = true;
+		}
+	};
+	document.onkeyup = function(ev){
+		if(ev.keyCode==39){
+			right = false;
+		}else if(ev.keyCode==37){
+			left = false;
+		}
+		if(ev.keyCode==38){
+			top = false;
+		}else if(ev.keyCode==40){
+			bottom = false;
+		}
+	};
+};
+</script>
+</head>
+<body>
+<div class="box">
+	<div class="front">可以拖动哦</div>
+    <div class="back"></div>
+    <div class="left"></div>
+    <div class="right"></div>
+    <div class="top"></div>
+    <div class="bottom"></div>
+</div>
+</body>
+</html>

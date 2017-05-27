@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>3D图片环</title>
+<style>
+*{margin:0; padding:0; list-style:none;}
+body{background:#69aa70;overflow:hidden;}
+ul{width:133px; height:200px; margin:150px auto; position:relative; top:0; left:0; -webkit-transform-style:preserve-3d; -webkit-transform:perspective(800px) rotateX(-15deg) rotateY(0deg);}
+ul li{width:100%; height:100%; position:absolute; top:0; left:0; -webkit-transition:1s all ease;border-radius:8px; box-shadow:0 0 10px 2px #fff;-webkit-box-reflect:below 10px -webkit-linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.5));}
+ul li img{width:100%;}
+</style>
+<script>
+window.onload=function(){
+	var oUl = document.getElementById('ul1');
+	var aLi = oUl.children;
+	var i=aLi.length-1;
+	var timer = setInterval(function(){
+		aLi[i].style.WebkitTransform='rotateY('+i*360/aLi.length+'deg) translateZ(305px)';
+		i--;
+		if(i<0){
+			clearInterval(timer);
+		}
+	},100);
+	
+	
+	
+	var timer2 = null;
+	var x = 150;
+	var y = 0;
+	var speedX = 0;
+	var speedY = 0;
+	var lastX = 0;
+	var lastY = 0;
+	var bOk = true;
+	aLi[0].addEventListener('transitionend',function(){
+		bOk=false;
+	});
+	document.onmousedown=function(ev){
+		if(bOk==true)return;
+		var disX = ev.clientX-y;
+		var disY = ev.clientY-x;
+		document.onmousemove=function(ev){
+			x = ev.clientY-disY;
+			y = ev.clientX-disX;
+			if(x>=600){
+				x=600;
+			}else if(x<=-600){
+				x=-600;
+			}
+			oUl.style.WebkitTransform='perspective(800px) rotateX('+-x/10+'deg) rotateY('+y/10+'deg)';
+			speedX = x-lastX;
+			speedY = y-lastY;
+			lastX = x;
+			lastY = y;
+			
+		};
+		document.onmouseup=function(){
+			document.onmousemove=null;
+			document.onmouseup=null;
+			timer2 = setInterval(function(){
+				x+=speedX;
+				y+=speedY;
+				speedX*=0.95;
+				speedY*=0.95;
+				if(Math.abs(speedX)<1){
+					speedX=0;
+				}
+				if(Math.abs(speedY)<1){
+					speedY=0;
+				}
+				if(speedX==0&&speedY==0){
+					clearInterval(timer2);
+				}
+				if(x>=600)
+					x=600
+				else if(x<=-600)
+					x=-600;
+				oUl.style.WebkitTransform='perspective(800px) rotateX('+-x/10+'deg) rotateY('+y/10+'deg)';
+			},30);
+		};
+		return false;
+	};
+	
+};
+</script>
+</head>
+
+<body>
+<ul id="ul1">
+	<li><img src="img/1.jpg" /></li>
+	<li><img src="img/2.jpg" /></li>
+	<li><img src="img/3.jpg" /></li>
+	<li><img src="img/4.jpg" /></li>
+	<li><img src="img/5.jpg" /></li>
+	<li><img src="img/6.jpg" /></li>
+	<li><img src="img/7.jpg" /></li>
+	<li><img src="img/8.jpg" /></li>
+	<li><img src="img/9.jpg" /></li>
+	<li><img src="img/10.jpg" /></li>
+	<li><img src="img/11.jpg" /></li>
+</ul>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

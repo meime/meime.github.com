@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="author" content="智能社 - zhinengshe.com">
+<meta name="copyright" content="智能社 - zhinengshe.com">
+<title>智能社 - www.zhinengshe.com</title>
+<style>
+*{margin:0; padding:0;}
+body{background:#69aa70;}
+ul{overflow:hidden; width:630px; margin:100px auto;}
+li{width:200px; height:200px; background:#ccc; font-size:30px; font-weight:bold; line-height:200px; overflow:hidden; float:left; margin:5px; position:relative; top:0; left:0;}
+li span{position:absolute; top:0; left:-200px; width:100%; height:100%; background:red; opacity:0.6; filter:alpha(opacity:60);}
+li img{width:100%;}
+</style>
+<script src="js/move.js"></script>
+<script>
+function a2d(a){
+	return a*180/Math.PI;
+}
+function hoverDir(obj,oEvent){
+	var x = obj.offsetLeft+obj.offsetWidth/2-oEvent.clientX;
+	var y = obj.offsetTop+obj.offsetHeight/2-oEvent.clientY;
+	return Math.round((a2d(Math.atan2(y,x))+180)/90)%4;
+}
+function hoverGo(obj){
+	var oS = obj.children[0];
+	obj.onmouseover=function(ev){
+		var oEvent = ev||event;
+		var oFrom = oEvent.fromElement||oEvent.relatedTarget;
+		if(obj.contains(oFrom))return;
+		var dir = hoverDir(obj,oEvent);
+		switch(dir){
+			case 0:
+				oS.style.left = '200px';
+				oS.style.top = 0;
+				break;
+			case 1:
+				oS.style.left = 0;
+				oS.style.top = '200px';
+				break;
+			case 2:
+				oS.style.left = '-200px';
+				oS.style.top = 0;
+				break;
+			case 3:
+				oS.style.left = 0;
+				oS.style.top = '-200px';
+				break;
+		}
+		startMove(oS,{top:0,left:0});
+	};
+	obj.onmouseout=function(ev){
+		var oEvent = ev||event;
+		var oTo = oEvent.toElement||oEvent.relatedTarget;
+		if(obj.contains(oTo))return;
+		var dir = hoverDir(obj,oEvent);
+		switch(dir){
+			case 0:
+				startMove(oS,{left:200,top:0});
+				break;
+			case 1:
+				startMove(oS,{left:0,top:200});
+				break;
+			case 2:
+				startMove(oS,{left:-200,top:0});
+				break;
+			case 3:
+				startMove(oS,{left:0,top:-200});
+				break;
+		}
+	};
+}
+window.onload=function(){
+	var oDiv = document.body.children[0];
+	var oUl = oDiv.children[0];
+	var aLi = oUl.children;
+	for(var i=0;i<aLi.length;i++){
+		hoverGo(aLi[i]);
+	}
+};
+</script>
+</head>
+
+<body>
+<div>
+    <ul>
+        <li><span></span><img src="img/wall1.jpg"/></li>
+        <li><span></span><img src="img/wall2.jpg"/></li>
+        <li><span></span><img src="img/wall3.jpg"/></li>
+        <li><span></span><img src="img/wall4.jpg"/></li>
+        <li><span></span><img src="img/wall5.jpg"/></li>
+        <li><span></span><img src="img/wall6.jpg"/></li>
+    </ul>
+</div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

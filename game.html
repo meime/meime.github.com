@@ -1,0 +1,229 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+<link rel="stylesheet" href="css/base.css" />
+<style>
+body{background:url(img/bg3.jpg) center -100px no-repeat;background:#69aa70;}
+.game{width:1000px;margin:0 auto;height:650px;position:relative;left:0;top:0;}
+#btn{width:200px; height:40px; line-height:40px; text-align:center; color:#fff; font-size:20px; background:#316439; -webkit-transition:0.2s all ease;position:absolute;left:290px;top:30px;}
+#btn2{width:200px; height:40px; line-height:40px; text-align:center; color:#fff; font-size:20px; background:#316439;  -webkit-transition:0.2s all ease;position:absolute;left:510px;top:30px;}
+.game_box{ width:700px; height:400px;position:absolute;left:50%;margin-left:-350px;top:100px;}
+.game_box span{ position:absolute; transform-style:preserve-3d; transition:1s all ease;-webkit-transform:perspective(800px) rotateY(0deg); }
+.game_box span em{position:absolute; top:0; left:0; width:100%; height:100%;}
+.game_box .front{ background:url(img/rotate0.jpg) no-repeat; transform:translateZ(1px);}
+.game_box .back{ background:url(img/rotate1.jpg) no-repeat;transform:translateZ(-1px) scale(-1,1);}
+.rule{width:700px;height:30px;line-height:30px;font-size:18px;color:#C09;font-weight:bold;position:absolute;left:50%;margin-left:-350px;top:550px;text-align:center;}
+</style>
+<script src="js/move.js"></script>
+<script>
+window.onload = function(){
+	var oBox=document.querySelector('#game_box');	
+	var oBtn = document.querySelector('#btn');
+	var oBtn2 = document.querySelector('#btn2');
+	var oBtn3 = document.querySelector('#btn3');
+	var aSpan=oBox.children;
+	var R=4;
+	var C=7;
+	var iNow=0;
+	var bReady=true;
+	var bReady2 = true;
+	var zIndex = 10;
+	for(var r=0; r<R; r++){
+		for(var c=0; c<C; c++){
+			var oSpan=document.createElement('span');
+			oSpan.style.width=oBox.offsetWidth/C+'px';
+			oSpan.style.height=oBox.offsetHeight/R+'px';
+			oBox.appendChild(oSpan);
+			
+			oSpan.style.left=c*oSpan.offsetWidth+'px';
+			oSpan.style.top=r*oSpan.offsetHeight+'px';
+			
+			oSpan.innerHTML='<em class="front"></em><em class="back"></em>';
+			oSpan.children[0].style.backgroundPosition='-'+c*oSpan.offsetWidth+'px -'+r*oSpan.offsetHeight+'px';
+			oSpan.children[1].style.backgroundPosition='-'+c*oSpan.offsetWidth+'px -'+r*oSpan.offsetHeight+'px';		
+			oSpan.c=c;
+			oSpan.r=r;		
+		}
+	}
+	//换图片
+	oBtn.onclick=function(){
+		if(bReady==false)return;
+		bReady=false;
+		iNow++;		
+		for(var i=0; i<aSpan.length;i++){
+			(function(index){
+				setTimeout(function(){
+					aSpan[index].style.transition='1s all ease';
+					aSpan[index].style.transform='perspective(800px) rotateY(180deg)';
+				},100*(aSpan[index].c+aSpan[index].r));
+			})(i)
+		}
+		aSpan[aSpan.length-1].addEventListener('transitionend',function(){
+			bReady=true;
+			for(var i=0; i<aSpan.length; i++){
+				aSpan[i].style.transition='none';
+				aSpan[i].style.transform='perspective(800px) rotateY(0deg)';
+				aSpan[i].children[0].style.backgroundImage='url(img/rotate'+iNow%3+'.jpg)';
+				aSpan[i].children[1].style.backgroundImage='url(img/rotate'+(iNow+1)%3+'.jpg)';
+			}
+		},false);
+	};
+	//布局转换
+	var aPos = [];
+	for(var i=0;i<aSpan.length;i++){
+		aPos.push({left:aSpan[i].offsetLeft,top:aSpan[i].offsetTop});
+	}
+	var aTime = 10; 
+	var timer = null;
+	oBtn2.onclick = function(){
+		if(bReady2)return;
+		bReady=false;
+		var bReady2 = false;	
+		oBtn2.innerHTML = '游戏即将开始('+aTime+')';
+		timer = setInterval(function(){
+			aTime--;
+			oBtn2.innerHTML = '游戏即将开始('+aTime+')';
+			if(aTime==0){
+				clearInterval(timer);
+				oBtn2.innerHTML = '游戏开始';	
+			}
+		},1000);
+		
+		
+		setTimeout(function(){
+			change();
+			//每个都能拖拽
+			for(var i=0;i<aSpan.length;i++){
+				drag(aSpan[i]);
+				aSpan[i].index=i;
+			}
+			
+			function drag(obj){
+				obj.onmousedown=function(ev){
+					zIndex++;
+					obj.style.zIndex=zIndex;
+					var oEvent = ev||event;
+					var disX = oEvent.clientX-obj.offsetLeft;
+					var disY = oEvent.clientY-obj.offsetTop;
+					document.onmousemove=function(ev){
+						var oEvent = ev||event;
+						obj.style.left = oEvent.clientX-disX+'px';
+						obj.style.top = oEvent.clientY-disY+'px';
+						for(var i=0;i<aSpan.length;i++){
+							aSpan[i].className='';
+						}
+						//找到最近的元素
+						var oNear = findNearest(obj);
+						//如果找到了，就加个on
+						if(oNear){
+							oNear.className='on';
+						}
+					};
+					document.onmouseup=function(){
+						document.onmousemove=null;
+						document.onmouseup=null;
+						obj.releaseCapture&&obj.releaseCapture();
+						var oNear = findNearest(obj);
+						if(oNear){
+							oNear.className='';
+							
+							startMove(obj,aPos[oNear.index]);
+							//obj.style.left = aPos[oNear.index].left+'px';
+							//obj.style.top = aPos[oNear.index].top+'px';
+							startMove(oNear,aPos[obj.index]);
+							//oNear.style.left = aPos[obj.index].left+'px';
+							//oNear.style.top = aPos[obj.index].top+'px';
+							var car;
+							car = obj.index;
+							obj.index = oNear.index;
+							oNear.index = car;
+						}else{
+							obj.style.left = aPos[obj.index].left+'px';
+							obj.style.top = aPos[obj.index].top+'px';
+						}
+					};
+					obj.setCapture&&obj.setCapture();
+					return false;
+				};
+			}
+			//找最近
+			function findNearest(obj){
+				//假设一个最近的值
+				var iMin = new Date().getTime();
+				//假设一个最近的索引
+				var iMinIndex = -1;
+				for(var i=0;i<aSpan.length;i++){
+					//如果跟obj相等，代表找到了当前这个元素。
+					if(obj==aSpan[i])continue;
+					//如果碰到了，就要找最近的
+					if(callTest(obj,aSpan[i])){
+						//比对交换
+						if(iMin>getDis(obj,aSpan[i])){
+							iMin = getDis(obj,aSpan[i]);
+							iMinIndex = i;
+						}
+					}
+				}
+				//如果iMinIndex等于-1代表没找到。
+				if(iMinIndex==-1){
+					return null;
+				}else{
+					return aSpan[iMinIndex];
+				}
+			}
+			//碰撞检测
+			function callTest(obj,obj2){
+				var l1 = obj.offsetLeft;
+				var t1 = obj.offsetTop;
+				var r1 = obj.offsetLeft+obj.offsetWidth;
+				var b1 = obj.offsetTop+obj.offsetHeight;
+				var l2 = obj2.offsetLeft;
+				var t2 = obj2.offsetTop;
+				var r2 = obj2.offsetLeft+obj2.offsetWidth;
+				var b2 = obj2.offsetTop+obj2.offsetHeight;
+				if(r1<l2||b1<t2||l1>r2||t1>b2){
+					return false;
+				}else{
+					return true;
+				}
+			}
+			//最近距离
+			function getDis(obj,obj2){
+				var l1 = obj.offsetLeft+obj.offsetWidth/2;
+				var l2 = obj2.offsetLeft+obj2.offsetWidth/2;
+				var t1 = obj.offsetTop+obj.offsetHeight/2;
+				var t2 = obj2.offsetTop+obj2.offsetHeight/2;
+				var a = l2-l1;
+				var b = t2-t1;
+				return Math.sqrt(Math.pow(a,2)+Math.pow(b,2));
+			}
+		},10000);
+		
+	};
+	function change(){
+		aPos.sort(function(){
+			return Math.random()-0.5;
+		});
+		for(var i=0;i<aSpan.length;i++){
+			//aLi[i].style.left = aPos[i].left+'px';
+			//aLi[i].style.top = aPos[i].top+'px';
+			startMove(aSpan[i],aPos[i]);
+			aSpan[i].index = i;
+		}
+		
+	};
+}
+</script>
+</head>
+<body>
+<div class="game">
+ 	<div id="btn">换一换</div>
+    <div id="btn2">开始游戏</div>
+	<div class="game_box" id="game_box">
+    </div>   
+    <p class="rule">游戏规则：游戏开始前点击换一换按钮选择好图片，然后点击开始游戏按钮开始拼图。</p>
+</div>
+</body>
+</html>

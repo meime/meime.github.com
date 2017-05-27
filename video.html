@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+<link rel="stylesheet" href="css/base.css"/>
+<style>
+*{margin:0;padding:0;}
+body{background:#69aa70;}
+.video_box{width:740px;height:540px;border-radius:10px 10px 10px 10px;margin:50px auto;border-bottom:3px solid #0c0c0c;}
+.video{width:700px;height:400px;border-top:20px solid #0c0c0c;border-bottom:20px solid #0c0c0c;border-left:20px solid #1f1e23;border-right:20px solid #1f1e23;border-radius:10px 10px 0 0;position:relative;}
+.shipin{width:700px;height:400px;background:#666;}
+#bar_box{width:700px;height:50px;background:rgba(0,0,0,0.3);position:absolute;left:0;bottom:0;}
+#bar_bg{width:560px;height:20px;background:#181816;border:1px solid #000;margin-top:14px;margin-left:20px;position:relative;}
+#bar{width:0px;height:20px;background:#F00;}
+#bar_btn{width:25px;height:20px;background:-webkit-linear-gradient(top,#F00,#ccc,#F00);position:absolute;left:0;top:0;}
+#time{width:90px;height:20px;color:#fff;position:absolute;right:10px;top:14px;}
+.control{width:740px;height:100px;background:#d8d8d8;border-radius:0 0 10px 10px;}
+</style>
+<script>
+function toDou(iNum){
+	return iNum<10?'0'+iNum:''+iNum;
+}
+function time2min(time){
+	var sMin = parseInt(time/60);
+	var sSec = parseInt(time%60);
+	return toDou(sMin)+':'+toDou(sSec);
+}
+window.onload = function(){
+	var oPlay = document.querySelector('#play');
+	var oV = document.querySelector('video');
+	var oS = document.querySelector('span');
+	var oBarBg = document.getElementById('bar_bg');
+	var oBar = document.getElementById('bar');
+	var oBarBtn = document.getElementById('bar_btn');
+	var oTime = document.getElementById('time');
+	var bOk = true;
+	oPlay.onclick=function(){
+		if(bOk){
+			oV.play();
+		}else{
+			oV.pause();
+		}
+		bOk = !bOk;
+	};
+	oV.ontimeupdate = function(){
+		oTime.innerHTML = time2min(oV.currentTime)+'/'+time2min(oV.duration);
+		var scale = oV.currentTime/oV.duration;
+		oBar.style.width = scale*oBarBg.offsetWidth+'px';
+		oBarBtn.style.left = scale*(oBarBg.offsetWidth-oBarBtn.offsetWidth)+'px';
+	};
+	oBarBtn.onmousedown=function(ev){
+		var disX = ev.clientX-oBarBtn.offsetLeft;
+		oV.pause();   //按下暂停
+		document.onmousemove=function(ev){
+			var l =ev.clientX-disX;	
+			oBarBtn.style.left = l+'px';
+			var scale =l/(oBarBg.offsetWidth-oBarBtn.offsetWidth);
+			oBar.style.width = scale*oBarBg.offsetWidth+'px';
+			oV.currentTime = scale*oV.duration;
+			oV.play();  //拖动后播放
+		};
+		document.onmouseup=function(){
+			document.onmousemove=null;
+			document.onmouseup=null;
+		};
+		return false;
+	};
+
+};
+</script>
+</head>
+
+<body>
+<div class="video_box">
+	<div class="video">
+		<video src="http://images.sohu.com/ytv/SH/Coke/64036020120714021103.mp4" class="shipin"></video>
+        <div id="bar_box">
+            <div id="bar_bg">
+                <div id="bar"></div>
+                <div id="bar_btn"></div>
+            </div>
+            <span  id="time">00:00/00:00</span>
+        </div>
+    </div>
+	<div class="control clearfix">
+   		<input type="button" value="上一个" id="prev" class="fl"/>
+    	<input type="button" value="播放" id="play" class="fl"/>
+        <input type="button" value="下一个" id="next"  class="fl"/>
+    </div>
+</div>
+</body>
+</html>
